@@ -1,0 +1,75 @@
+using System; // Mengimpor namespace System untuk fungsi input/output
+
+// Kelas abstrak yang menjadi dasar untuk transaksi penjualan
+abstract class TransaksiPenjualan
+{
+    public abstract void ProsesTransaksi(double jumlah); // Metode abstrak untuk memproses transaksi
+    public abstract void CetakNota(); // Metode abstrak untuk mencetak nota
+}
+
+// Interface yang mendefinisikan metode untuk diskon dan pajak
+interface IHitungBiaya
+{
+    double HitungDiskon(double jumlah); // Metode untuk menghitung diskon berdasarkan jumlah transaksi
+    double HitungPajak(double jumlah); // Metode untuk menghitung pajak berdasarkan jumlah transaksi
+}
+
+// Kelas TransaksiToko yang mengimplementasikan TransaksiPenjualan dan IHitungBiaya
+class TransaksiToko : TransaksiPenjualan, IHitungBiaya
+{
+    private double total; // Variabel untuk menyimpan total biaya transaksi
+
+    public override void ProsesTransaksi(double jumlah)
+    {
+        // Implementasi metode untuk memproses transaksi
+        double diskon = HitungDiskon(jumlah); // Hitung diskon berdasarkan jumlah transaksi
+        double pajak = HitungPajak(jumlah); // Hitung pajak berdasarkan jumlah transaksi
+
+        // Menghitung total setelah diskon dan pajak
+        total = (jumlah - diskon) + pajak;
+        Console.WriteLine($"Total setelah diskon dan pajak: {total}");
+    }
+
+    public override void CetakNota()
+    {
+        // Implementasi metode untuk mencetak nota transaksi
+        Console.WriteLine("=== Nota Transaksi ===");
+        Console.WriteLine($"Total: {total}");
+        Console.WriteLine("======================");
+    }
+
+    public double HitungDiskon(double jumlah)
+    {
+        // Implementasi metode untuk menghitung diskon
+        if (jumlah > 1000) // Jika jumlah transaksi lebih dari 1000, berikan diskon 10%
+        {
+            return jumlah * 0.1;
+        }
+        return 0; // Tidak ada diskon jika jumlah transaksi kurang dari atau sama dengan 1000
+    }
+
+    public double HitungPajak(double jumlah)
+    {
+        // Implementasi metode untuk menghitung pajak sebesar 5%
+        return jumlah * 0.05;
+    }
+}
+
+// Kelas utama Program sebagai titik awal aplikasi
+class Program
+{
+    static void Main(string[] args)
+    {
+        TransaksiToko transaksi = new TransaksiToko(); // Membuat objek TransaksiToko
+
+        // Membaca input jumlah transaksi
+        Console.WriteLine("Masukkan jumlah transaksi:");
+        double jumlah = double.Parse(Console.ReadLine());
+
+        // Memproses transaksi
+        transaksi.ProsesTransaksi(jumlah);
+
+        // Mencetak nota transaksi
+        transaksi.CetakNota();
+    }
+}
